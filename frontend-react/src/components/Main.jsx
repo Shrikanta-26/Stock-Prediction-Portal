@@ -1,5 +1,4 @@
 import React from "react";
-import Footer from "./Footer"
 import Button from "./Button";
 const Main = () => {
   return (
@@ -10,7 +9,7 @@ const Main = () => {
           <p className="text-light lead">
             This is stock prediction application
           </p>
-          <Button text="Login" class="btn btn-outline-info" />
+          <Button text="Explore Now" class="btn btn-info" url="/dashboard" />
         </div>
       </div>
     </>

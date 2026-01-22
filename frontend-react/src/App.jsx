@@ -5,14 +5,38 @@ import Register from "./components/Register";
 import Login from "./components/Login";
 import "./assets/css/style.css";
 import AuthProvider from "./AuthProvider";
-
+import Dashboard from "./components/dashboard/Dashboard";
+import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       { path: "/", element: <Main /> },
-      { path: "/register", element: <Register /> },
-      { path: "/login", element: <Login /> },
+      {
+        path: "/register",
+        element: (
+          <PublicRoute>
+            <Register />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/login",
+        element: (
+          <PublicRoute>
+            <Login />
+          </PublicRoute>
+        ),
+      },
+      {
+        path: "/dashboard",
+        element: (
+          <PrivateRoute>
+            <Dashboard />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);

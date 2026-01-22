@@ -12,7 +12,7 @@ const Login = () => {
     const [error,setError] = useState('')
     const {isLoggedIn,setIsLoggedIn} = useContext(AuthContext)
     const navigate = useNavigate()
-    
+    // console.log(isLoggedIn)
    const handleLogin = async (e) =>{
     e.preventDefault();
     setLoading(true)
@@ -24,7 +24,7 @@ const Login = () => {
       localStorage.setItem('refreshToken', response.data.refresh)      
       console.log('Login successful');
       setIsLoggedIn(true)
-      navigate('/')
+      navigate('/dashboard')
     }catch(error){
       console.error('Invalid Credentials')
       setError('Invalid Credentials')
@@ -54,7 +54,7 @@ const Login = () => {
                 <input
                   type="password"
                   className="form-control mb-3"
-                  placeholder="Set password"
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
