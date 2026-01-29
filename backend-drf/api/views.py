@@ -2,6 +2,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import StockPredictionSerializer
+import yfinance as yf
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from datetime import datetime
+import os
+from django.conf import settings
 
 class StockPredictionAPIView(APIView):
     def post(self, request):
@@ -9,5 +16,37 @@ class StockPredictionAPIView(APIView):
 
         if serializer.is_valid():
             ticker = serializer.validated_data['ticker']
+     
+        #Fetch the data from yfinance
+            now = datetime.now()
+            start = datetime(now.year-10, now.month, now.day)
+            end = now
+            df = yf.download(ticker,start,end)
+            if df.empty:
+                return Response({"error":"No data found for the given ticker.", 'status':status.HTTP_404_NOT_FOUND})
+            if isinstance(df.columns, pd.MultiIndex):
+                df.columns = df.columns.get_level_values(0)  
+
+            df.columns.name = None
+            df = df.reset_index()
+            
+            #Generate Basic Plot
+            plt.switch_backend('AGG')
+            plt.figure(figsize=(12, 5))
+            plt.plot(df.Close, label='Closing Price') 
+            plt.title(f"Closing price of {ticker}")
+            plt.xlabel('Days')
+            plt.ylabel('Close price')
+            plt.legend()
+            
+            #Save the plot to a file
+
+            plot_img_path = f'{ticker}_plot.png'
+            image_path=os.path.join(settings.MEDIA_ROOT, plot_img_path)
+            plt.savefig(image_path)
+            plt.close()
+            image_url=settings.MEDIA_URL + plot_img_path
+            print(image_url)
+
             return Response({'status': 'success', 'ticker': ticker},status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
