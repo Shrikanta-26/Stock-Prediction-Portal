@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../../axiosInstance";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+ 
+
 const Dashboard = () => {
   const [ticker, setTicker] = useState("");
   const [error, setError] = useState();
   const [loading, setLoading] = useState(false);
-
+  const [plot,setPlot] = useState()
   useEffect(() => {
     const fetchProtectedData = async () => {
       try {
@@ -26,6 +28,12 @@ const Dashboard = () => {
         ticker: ticker,
       });
       console.log(response.data);
+
+      //Set Plot
+   
+       const backendRoot = import.meta.env.VITE_BACKEND_ROOT
+       const plotUrl = `${backendRoot}${response.data.plot_img}`
+       setPlot(plotUrl)
       if (response.data.error) {
         setError(response.data.error);
       }
@@ -59,6 +67,14 @@ const Dashboard = () => {
               )}
             </button>
           </form>
+        </div>
+        {/* Print prediction plot */}
+        <div className="prediction mt-5">
+          <div className="p-3">
+            {plot && (
+              <img src={plot} style={{maxWidth: '100%'}}/>
+            )}
+          </div>
         </div>
       </div>
     </div>

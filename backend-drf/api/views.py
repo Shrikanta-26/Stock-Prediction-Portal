@@ -45,8 +45,8 @@ class StockPredictionAPIView(APIView):
             image_path=os.path.join(settings.MEDIA_ROOT, plot_img_path)
             plt.savefig(image_path)
             plt.close()
-            image_url=settings.MEDIA_URL + plot_img_path
-            print(image_url)
+            plot_img=settings.MEDIA_URL + plot_img_path
+            print(plot_img)
 
-            return Response({'status': 'success', 'ticker': ticker},status=status.HTTP_200_OK)
+            return Response({'status': 'success', 'plot_img':plot_img},status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
