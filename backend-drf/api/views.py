@@ -12,7 +12,7 @@ from django.conf import settings
 from .utils import save_plot
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import load_model
-
+from sklearn.metrics import mean_squared_error,r2_score
 class StockPredictionAPIView(APIView):
     def post(self, request):
         serializer = StockPredictionSerializer(data=request.data)  # ✅ FIX
@@ -119,11 +119,42 @@ class StockPredictionAPIView(APIView):
             plot_img_path = f'{ticker}_final_prediction.png'
             plot_prediction = save_plot(plot_img_path) 
 
+            # Plot a special portion
+            plt.switch_backend('AGG')
+            plt.figure(figsize=(12, 5))
+            plt.plot(y_test,'b', label='Original Price') 
+            plt.plot(y_predicted, 'r', label='Predicted Price')
+            plt.title(f"A Fixed Portion Prediction for {ticker}")
+            plt.xlabel('Days')
+            plt.ylabel('Price')
+            plt.xlim(450, 750)
+            plt.ylim(130, 260)
+            plt.legend()
+            plot_img_path = f'{ticker}_aFixed_portion_prediction.png'
+            plot_aFixed_portion_prediction = save_plot(plot_img_path) 
+
+            # Model Evaluation
+            # Mean Squared Error(MSE)
+            mse = mean_squared_error(y_test, y_predicted)
+            # print(f"Mean Squared Error (MSE): {mse}")
+
+            # Root Mean Squared Error (RMSE)
+            rmse = np.sqrt(mse)
+            # print(f"Root Mean Squared Error (RMSE): {rmse}")
+           
+            # R-Squared
+            r2 = r2_score(y_test, y_predicted)
+            # print(f"R-Squared: {r2}")
+
             return Response({
                 'status': 'success', 
                 'plot_img':plot_img,
                 'plot_100_dma':plot_100_dma,
                 'plot_200_dma':plot_200_dma,
-                'plot_prediction':plot_prediction
+                'plot_prediction':plot_prediction,
+                'plot_aFixed_portion_prediction':plot_aFixed_portion_prediction,
+                'mse': mse,
+                'rmse':rmse,
+                'r2': r2,
                 },status=status.HTTP_200_OK)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)

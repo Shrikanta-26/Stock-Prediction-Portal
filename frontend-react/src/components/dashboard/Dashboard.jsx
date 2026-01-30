@@ -11,7 +11,10 @@ const Dashboard = () => {
   const [ma100, setMA100] = useState();
   const [ma200, setMA200] = useState();
   const [prediction, setPrediction] = useState();
-
+  const [portionPrediction, setPortionPrediction] = useState();
+  const [mse, setMSE] = useState();
+  const [rmse, setRMSE] = useState();
+  const [r2, setR2] = useState();
   useEffect(() => {
     const fetchProtectedData = async () => {
       try {
@@ -39,11 +42,16 @@ const Dashboard = () => {
       const ma100 = `${backendRoot}${response.data.plot_100_dma}`;
       const ma200 = `${backendRoot}${response.data.plot_200_dma}`;
       const predictionUrl = `${backendRoot}${response.data.plot_prediction}`;
+      const portionPredictionUrl = `${backendRoot}${response.data.plot_aFixed_portion_prediction}`;
 
       setPlot(plotUrl);
       setMA100(ma100);
       setMA200(ma200);
       setPrediction(predictionUrl);
+      setPortionPrediction(portionPredictionUrl)
+      setMSE(response.data.mse);
+      setRMSE(response.data.rmse);
+      setR2(response.data.r2);
       if (response.data.error) {
         setError(response.data.error);
       }
@@ -79,20 +87,35 @@ const Dashboard = () => {
           </form>
         </div>
         {/* Print prediction plot */}
-        <div className="prediction mt-5">
-          <div className="p-3">
-            {plot && <img src={plot} style={{ maxWidth: "100%" }} />}
+        {prediction && (
+          <div className="prediction mt-5">
+            <div className="p-3">
+              {plot && <img src={plot} style={{ maxWidth: "100%" }} />}
+            </div>
+            <div className="p-3">
+              {ma100 && <img src={ma100} style={{ maxWidth: "100%" }} />}
+            </div>
+            <div className="p-3">
+              {ma200 && <img src={ma200} style={{ maxWidth: "100%" }} />}
+            </div>
+            <div className="p-3">
+              {prediction && (
+                <img src={prediction} style={{ maxWidth: "100%" }} />
+              )}
+            </div>
+            <div className="p-3">
+              {portionPrediction && (
+                <img src={portionPrediction} style={{ maxWidth: "100%" }} />
+              )}
+            </div>
+            <div className="text-light p-3">
+              <h4>Model Evaluation</h4>
+              <p>Mean Squared Error (MSE): {mse}</p>
+              <p>Root Mean Squared Error (RMSE): {rmse}</p>
+              <p>R-Squared: {r2}</p>
+            </div>
           </div>
-          <div className="p-3">
-            {ma100 && <img src={ma100} style={{ maxWidth: "100%" }} />}
-          </div>
-          <div className="p-3">
-            {ma200 && <img src={ma200} style={{ maxWidth: "100%" }} />}
-          </div>
-          <div className="p-3">
-            {prediction && <img src={prediction} style={{ maxWidth: "100%" }} />}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
