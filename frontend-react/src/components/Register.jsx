@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -30,6 +30,9 @@ const Register = () => {
       console.log("Registration Successful");
       setError({});
       setSuccess(true);
+      setUsername("");
+      setEmail("");
+      setPassword("");
     } catch (error) {
       setError(error.response.data);
       console.error("Registration error: ", error.response.data);
@@ -94,8 +97,12 @@ const Register = () => {
               )}
 
               {loading ? (
-                <button type="submit" className="btn btn-info d-block mx-auto" disabled>
-                 <FontAwesomeIcon icon={faSpinner} spin/> Please wait...
+                <button
+                  type="submit"
+                  className="btn btn-info d-block mx-auto"
+                  disabled
+                >
+                  <FontAwesomeIcon icon={faSpinner} spin /> Please wait...
                 </button>
               ) : (
                 <button type="submit" className="btn btn-info d-block mx-auto">
