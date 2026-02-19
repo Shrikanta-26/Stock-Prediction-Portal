@@ -12,11 +12,17 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const { setIsLoggedIn } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    if (!username || !password) {
+      toast.error("Username and Password are required!", { icon: "❌" });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -29,22 +35,12 @@ const Login = () => {
       localStorage.setItem("refreshToken", response.data.refresh);
 
       // Show success toast
-      toast.success("Login successful!", {
-        position: "top-right",
-        autoClose: 2000,
-        theme: "colored",
-        onClose: () => {
-          setIsLoggedIn(true);
-          navigate("/dashboard");
-        },
-      });
+      toast.success("Login successful!", { icon: "✅" });
+      setIsLoggedIn(true);
+      navigate("/dashboard");
     } catch (error) {
       // Show error toast
-      toast.error("Invalid Credentials!", {
-        position: "top-right",
-        autoClose: 3000,
-        theme: "colored",
-      });
+      toast.error(error.response?.data?.detail || "Login failed", {});
     } finally {
       setLoading(false);
     }
@@ -52,12 +48,6 @@ const Login = () => {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        theme="colored"
-        hideProgressBar={false}
-      />
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6 bg-light-dark p-5 rounded">
